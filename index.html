@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Whack-a-Mole</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Grain overlay for atmospheric texture -->
+    <div class="grain-overlay" aria-hidden="true"></div>
+
+    <div class="game-container">
+        <header class="game-header">
+            <h1 class="title">
+                <span class="title-icon">⚡</span>
+                <span class="title-word" style="--i:0">W</span><span class="title-word" style="--i:1">H</span><span class="title-word" style="--i:2">A</span><span class="title-word" style="--i:3">C</span><span class="title-word" style="--i:4">K</span>
+                <span class="title-sep">-</span>
+                <span class="title-word" style="--i:5">A</span>
+                <span class="title-sep">-</span>
+                <span class="title-word" style="--i:6">M</span><span class="title-word" style="--i:7">O</span><span class="title-word" style="--i:8">L</span><span class="title-word" style="--i:9">E</span>
+            </h1>
+            <div class="high-score" id="high-score"></div>
+        </header>
+
+        <div class="game-hud">
+            <div class="hud-item score-display">
+                <span class="hud-label">SCORE</span>
+                <span class="hud-value" id="score">0</span>
+            </div>
+            <div class="hud-item combo-display" id="combo">
+                <span class="hud-label">COMBO</span>
+                <span class="hud-value" id="combo-value">—</span>
+            </div>
+            <div class="hud-item timer-display">
+                <span class="hud-label">TIME</span>
+                <span class="hud-value" id="timer">30</span>
+            </div>
+        </div>
+
+        <div class="powerup-indicator" id="powerup-indicator"></div>
+
+        <div class="board-wrapper">
+            <div class="board" id="board">
+                <div class="hole" data-hole="0"><div class="mole"><div class="mole-face"></div></div></div>
+                <div class="hole" data-hole="1"><div class="mole"><div class="mole-face"></div></div></div>
+                <div class="hole" data-hole="2"><div class="mole"><div class="mole-face"></div></div></div>
+                <div class="hole" data-hole="3"><div class="mole"><div class="mole-face"></div></div></div>
+                <div class="hole" data-hole="4"><div class="mole"><div class="mole-face"></div></div></div>
+                <div class="hole" data-hole="5"><div class="mole"><div class="mole-face"></div></div></div>
+                <div class="hole" data-hole="6"><div class="mole"><div class="mole-face"></div></div></div>
+                <div class="hole" data-hole="7"><div class="mole"><div class="mole-face"></div></div></div>
+                <div class="hole" data-hole="8"><div class="mole"><div class="mole-face"></div></div></div>
+            </div>
+        </div>
+
+        <div class="countdown" id="countdown"></div>
+        <button id="start-btn" class="start-btn">
+            <span class="btn-text">START GAME</span>
+            <span class="btn-glow" aria-hidden="true"></span>
+        </button>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
