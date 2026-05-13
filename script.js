@@ -37,6 +37,10 @@
         highScoreEl.textContent = `🏆 Best: ${highScore}`;
     }
 
+    /**
+     * Selects a random hole, ensuring it's never the same as the previous one.
+     * @returns {HTMLElement} A randomly selected hole element
+     */
     function getRandomHole() {
         let hole;
         do {
@@ -48,6 +52,10 @@
         return hole;
     }
 
+    /**
+     * Shows a mole in a random hole for a variable duration.
+     * Resets combo if the mole escapes without being whacked.
+     */
     function showMole() {
         if (!isGameActive) return;
 
@@ -69,6 +77,11 @@
         }, visibleTime);
     }
 
+    /**
+     * Creates a floating score indicator that animates upward from the hole.
+     * @param {HTMLElement} hole - The hole element to show the float above
+     * @param {number|string} points - Points earned or emoji to display
+     */
     function showScoreFloat(hole, points) {
         const float = document.createElement('div');
         float.className = 'score-float';
@@ -77,12 +90,20 @@
         setTimeout(() => float.remove(), 800);
     }
 
+    /**
+     * Triggers haptic feedback on supported devices.
+     * @param {number|number[]} ms - Duration or pattern for vibration
+     */
     function vibrate(ms) {
         if (navigator.vibrate) {
             navigator.vibrate(ms);
         }
     }
 
+    /**
+     * Applies a screen-shake effect to the board. Intensity scales with combo.
+     * @param {number} intensity - Shake strength (>=3 triggers hard shake)
+     */
     function screenShake(intensity) {
         const board = document.getElementById('board');
         const cls = intensity >= 3 ? 'shake-hard' : 'shake';
@@ -92,6 +113,11 @@
         setTimeout(() => board.classList.remove(cls), intensity >= 3 ? 400 : 300);
     }
 
+    /**
+     * Spawns burst particles at the center of a hole for hit feedback.
+     * @param {HTMLElement} hole - The hole element to emit particles from
+     * @param {number} count - Number of particles to spawn
+     */
     function spawnParticles(hole, count) {
         const colors = ['#ffd700', '#ff6b6b', '#ff9f43', '#fff'];
         const rect = hole.getBoundingClientRect();
@@ -116,11 +142,19 @@
 
     // === Power-up System ===
 
+    /**
+     * Returns a random power-up type key from the POWERUPS config.
+     * @returns {'freeze'|'double'|'slow'}
+     */
     function getRandomPowerupType() {
         const types = Object.keys(POWERUPS);
         return types[Math.floor(Math.random() * types.length)];
     }
 
+    /**
+     * Spawns a random power-up in an available hole.
+     * Disappears after 3s if not collected by the player.
+     */
     function spawnPowerup() {
         if (!isGameActive) return;
 
@@ -146,6 +180,11 @@
         }, 3000);
     }
 
+    /**
+     * Activates a power-up effect for its configured duration.
+     * Refreshes the timer if the same type is already active.
+     * @param {'freeze'|'double'|'slow'} type - The power-up type to activate
+     */
     function activatePowerup(type) {
         const config = POWERUPS[type];
 
@@ -183,6 +222,10 @@
         activePowerups[type] = { timeout, badgeInterval };
     }
 
+    /**
+     * Deactivates a power-up, reverting its effect and removing the HUD badge.
+     * @param {'freeze'|'double'|'slow'} type - The power-up type to deactivate
+     */
     function deactivatePowerup(type) {
         if (type === 'freeze') {
             isTimerFrozen = false;
@@ -200,6 +243,11 @@
         removePowerupBadge(type);
     }
 
+    /**
+     * Updates or creates the HUD badge showing active power-up and remaining time.
+     * @param {'freeze'|'double'|'slow'} type - Power-up type
+     * @param {number} seconds - Seconds remaining
+     */
     function updatePowerupBadge(type, seconds) {
         const config = POWERUPS[type];
         let badge = powerupIndicator.querySelector(`.powerup-badge.${type}`);
@@ -211,11 +259,16 @@
         badge.innerHTML = `${config.icon} ${config.label} <span class="badge-timer">${seconds}s</span>`;
     }
 
+    /**
+     * Removes the HUD badge for the given power-up type.
+     * @param {'freeze'|'double'|'slow'} type
+     */
     function removePowerupBadge(type) {
         const badge = powerupIndicator.querySelector(`.powerup-badge.${type}`);
         if (badge) badge.remove();
     }
 
+    /** Clears all active power-ups, timers, badges, and hole states. */
     function clearAllPowerups() {
         Object.keys(activePowerups).forEach(type => {
             clearTimeout(activePowerups[type].timeout);
@@ -234,6 +287,7 @@
         });
     }
 
+    /** Schedules the next power-up spawn at a random 6–10s interval. */
     function schedulePowerupSpawn() {
         if (!isGameActive) return;
         // Spawn a power-up every 6-10 seconds
@@ -246,6 +300,11 @@
 
     // === End Power-up System ===
 
+    /**
+     * Click handler for holes. Handles whacking moles, collecting power-ups,
+     * and registering misses. Triggers all juice effects (particles, shake, haptics).
+     * @param {Event} e - The click event from the hole element
+     */
     function whackMole(e) {
         if (!isGameActive) return;
 
@@ -315,6 +374,10 @@
         setTimeout(() => hole.classList.remove('hit'), 250);
     }
 
+    /**
+     * Displays a 3-2-1-GO! countdown before starting the game loop.
+     * @param {Function} callback - Called after countdown completes
+     */
     function runCountdown(callback) {
         let count = 3;
         startBtn.style.display = 'none';
@@ -345,6 +408,10 @@
         tick();
     }
 
+    /**
+     * Scales moleSpeed and moleVisibleTime based on elapsed time.
+     * Creates a gradual difficulty curve with defined minimum floors.
+     */
     function increaseDifficulty() {
         const elapsed = 30 - timeLeft;
         // Speed up over time
@@ -352,6 +419,7 @@
         moleVisibleTime = Math.max(500, 1200 - elapsed * 25);
     }
 
+    /** Resets all state and starts a new game after the countdown. */
     function startGame() {
         score = 0;
         timeLeft = 30;
@@ -400,6 +468,10 @@
         });
     }
 
+    /**
+     * Ends the game, saves high score if beaten, and shows the game-over overlay.
+     * Clears all intervals, power-ups, and active moles.
+     */
     function endGame() {
         isGameActive = false;
         clearTimeout(gameInterval);
@@ -458,4 +530,20 @@
     });
 
     startBtn.addEventListener('click', startGame);
+
+    // Expose for testing
+    if (typeof module !== 'undefined' && module.exports) {
+        module.exports = {
+            getState: () => ({ score, timeLeft, combo, moleSpeed, moleVisibleTime, isGameActive, isTimerFrozen, activePowerups }),
+            setState: (s) => { score = s.score ?? score; timeLeft = s.timeLeft ?? timeLeft; combo = s.combo ?? combo; isGameActive = s.isGameActive ?? isGameActive; moleSpeed = s.moleSpeed ?? moleSpeed; moleVisibleTime = s.moleVisibleTime ?? moleVisibleTime; },
+            startGame,
+            endGame,
+            whackMole,
+            increaseDifficulty,
+            activatePowerup,
+            deactivatePowerup,
+            clearAllPowerups,
+            showMole
+        };
+    }
 })();
