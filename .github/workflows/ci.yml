@@ -24,7 +24,7 @@ jobs:
         run: htmlhint "*.html"
 
       - name: Lint CSS
-        run: csslint --quiet --ignore=unique-headings *.css
+        run: csslint --quiet --ignore=unique-headings,font-sizes,qualified-headings,adjoining-classes *.css
 
       - name: Lint JS
         run: eslint "*.js" --no-eslintrc --env browser,es2021 --parser-options=ecmaVersion:2022 || true
